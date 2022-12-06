@@ -85,9 +85,9 @@
 				    <li class="nav-item"><a class="nav-link scrollto" href="#item-3-1">Creating an Http server</a></li>
 				    <li class="nav-item"><a class="nav-link scrollto" href="#item-3-2">Creating an Https server</a></li>
 				    <li class="nav-item section-title mt-3"><a class="nav-link scrollto" href="#section-4"><span class="theme-icon-holder me-2"><i class="fas fa-cogs"></i></span>Routing</a></li>
-				    <li class="nav-item"><a class="nav-link scrollto" href="#item-4-1">Section Item 4.1</a></li>
-				    <li class="nav-item"><a class="nav-link scrollto" href="#item-4-2">Section Item 4.2</a></li>
-				    <li class="nav-item"><a class="nav-link scrollto" href="#item-4-3">Section Item 4.3</a></li>
+				    <li class="nav-item"><a class="nav-link scrollto" href="#item-4-1">Creating a Router</a></li>
+				    <li class="nav-item"><a class="nav-link scrollto" href="#item-4-2">Creating endpoints</a></li>
+				    <li class="nav-item"><a class="nav-link scrollto" href="#item-4-3">Importing endpoints</a></li>
 				    <li class="nav-item section-title mt-3"><a class="nav-link scrollto" href="#section-5"><span class="theme-icon-holder me-2"><i class="fas fa-tools"></i></span>Utilities</a></li>
 				    <li class="nav-item"><a class="nav-link scrollto" href="#item-5-1">Section Item 5.1</a></li>
 				    <li class="nav-item"><a class="nav-link scrollto" href="#item-5-2">Section Item 5.2</a></li>
@@ -531,29 +531,67 @@ server.Start()</code>
 				    <header class="docs-header">
 					    <h1 class="docs-heading">Routing</h1>
 					    <section class="docs-intro">
-						    <p>Routing refers to matching an incomming client request with the matching endpoint (URI). For example when we have defined the endpoint (URI) / in our application and the client sends a HTTP request with the root url /, we call the method attached to the endpoint /. Within this method we can now handle the request and send a response.</p>
+						    <p>Routing refers to matching an incoming client request with the matching endpoint (URI). For example when we have defined the endpoint (URI) / in our application and the client sends a HTTP request with the root url /, we call the method attached to the endpoint /. Within this method we can now handle the request and send a response.</p>
 						</section><!--//docs-intro-->
 				    </header>
-				     <section class="docs-section" id="item-4-1">
-						<h2 class="section-heading">Importing routes</h2>
-						<p>To define an endpoint (URI) in WebBeaver we first create a method with a route attribute attached to it. This route attribute will define the path for the endpoint</p>
-						<pre>
-							<code class="language-cs">
-[Route('/')]
-void MyEndpoint(Request req, Response res)
+					<section class="docs-section" id="item-4-1">
+						<h2 class="section-heading">Creating a Router</h2>
+						<p>When using the WebBeaver routing we create a Router object. This object will hold all our endpoints and works together with an <a class="scrollto" href="#section-3">Http(s)</a> server to route the client requests to the correct endpoint.</p>
+						<p>In the following example we create a new Router object and give a Http server to it.</p>
+						<pre><code class="language-cs">Router router = new Router(server);</code></pre>
+						<div class="callout-block callout-block-info">
+                            
+                            <div class="content">
+                                <h4 class="callout-title">
+	                                <span class="callout-icon-holder me-1">
+		                                <i class="fas fa-info-circle"></i>
+		                            </span><!--//icon-holder-->
+	                                Note
+	                            </h4>
+                                <p>Make sure the router is fully setup (endpoints added, static folder set, etc.) before starting the Http server.</p>
+                            </div><!--//content-->
+                        </div><!--//callout-block-->
+						<br>
+						<h5>Route static files:</h5>
+						<p>When using a Router object a folder can be set where all static files (js, css, images, ...) can be placed.<br>In the following example the public folder within the project directory is set as the Static folder.</p>
+						<pre><code class="language-cs">router.Static("public")</code></pre>
+						<p>After this function is called files and folders that are put in the public folder are available with URIs. An example would be <code>/css/style.css</code></p>
+					</section>
+					<section class="docs-section" id="item-4-2">
+						<h2 class="section-heading">Creating endpoints</h2>
+						<p>An endpoint in WebBeaver is defined as a method with a Route attribute and the <code>(Request req, Response res)</code> arguments.</p>
+
+						<h5>Basic Endpoint:</h5>
+						<p>In the following example we create a basic endpoint with the name Index and the path /.
+							<br>So this endpoint will respond to any client requests to root url / with <code>Hello World</code>.
+						</p>
+						<pre><code class="language-cs">[Route('/')]
+void Index(Request req, Response res)
 {
 	res.Send("Hello World");
-}
-							</code>
+}</code>
 						</pre>
-						<p>After creating a new endpoint we need to register it in our Router object. For this we use the <code>Import</code> method:</p>
-						<pre>
-							<code class="language-cs">
-Router router = new Router(server);
 
-router.Import(MyEndpoint);
-							</code>
+						<h5>Http method Endpoint:</h5>
+						<p>In the following example we create a endpoint with the name IndexPost, the path / and the HTTP request method <code>POST</code>.
+							<br>This endpoint works almost the same as the basic endpoint but the client needs to use the HTTP <code>POST</code> request method when sending its request.
+						</p>
+						<p>A list of all Http methods can be found <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">here</a>.</p>
+						<pre><code class="language-cs">[Route('POST', '/')]
+void IndexPost(Request req, Response res)
+{
+	res.Send("Hello World");
+}</code>
 						</pre>
+					</section>
+				     <section class="docs-section" id="item-4-3">
+						<h2 class="section-heading">Importing endpoints</h2>
+						<p>When we have created some endpoints they won't do anything yet, we first have to add them to the router.
+							<br>This is done with the <code>Import()</code> method.
+						</p>
+						<p>In the following example we add the endpoint Index to our router.</p>
+						<pre><code class="language-cs">router.Import(Index);</code></pre>
+						<p>After adding the endpoint can be called when a client request matches it's route attribute values.</p>
 					</section><!--//section-->
 			    </article><!--//docs-article-->
 			    
