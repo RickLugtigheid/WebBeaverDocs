@@ -554,7 +554,7 @@ server.Start()</code>
 						<br>
 						<h5>Route static files:</h5>
 						<p>When using a Router object a folder can be set where all static files (js, css, images, ...) can be placed.<br>In the following example the public folder within the project directory is set as the Static folder.</p>
-						<pre><code class="language-cs">router.Static("public")</code></pre>
+						<pre><code class="language-cs">router.Static("public");</code></pre>
 						<p>After this function is called files and folders that are put in the public folder are available with URIs. An example would be <code>/css/style.css</code></p>
 					</section>
 					<section class="docs-section" id="item-4-2">
@@ -565,7 +565,7 @@ server.Start()</code>
 						<p>In the following example we create a basic endpoint with the name Index and the path /.
 							<br>So this endpoint will respond to any client requests to root url / with <code>Hello World</code>.
 						</p>
-						<pre><code class="language-cs">[Route('/')]
+						<pre><code class="language-cs">[Route("/")]
 void Index(Request req, Response res)
 {
 	res.Send("Hello World");
@@ -577,12 +577,36 @@ void Index(Request req, Response res)
 							<br>This endpoint works almost the same as the basic endpoint but the client needs to use the HTTP <code>POST</code> request method when sending its request.
 						</p>
 						<p>A list of all Http methods can be found <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">here</a>.</p>
-						<pre><code class="language-cs">[Route('POST', '/')]
+						<pre><code class="language-cs">[Route("POST", "/")]
 void IndexPost(Request req, Response res)
 {
 	res.Send("Hello World");
 }</code>
 						</pre>
+
+						<h5>Endpoint Collection:</h5>
+						<p>In the following example we create an class that will contain the endpoints for examples we want to show. 
+							<br>To make each endpoint route start with /examples we add a Route attribute to our class (this is not mandatory).
+						</p>
+						<pre><code class="language-cs">[Route("/examples")]
+class ExampleContoller
+{
+	[Route("/")]
+	static void Index(Request req, Response res)
+	{
+		res.SendFile("example_list.html");
+	}
+	[Route("/dotnet")]
+	static void DotnetExamples(Request req, Response res)
+	{
+		res.SendFile("examples_dotnet.html");
+	}
+	[Route("/js")]
+	static void JavaScriptExamples(Request req, Response res)
+	{
+		res.SendFile("examples_js.html");
+	}
+}</code>
 					</section>
 				     <section class="docs-section" id="item-4-3">
 						<h2 class="section-heading">Importing endpoints</h2>
@@ -592,6 +616,11 @@ void IndexPost(Request req, Response res)
 						<p>In the following example we add the endpoint Index to our router.</p>
 						<pre><code class="language-cs">router.Import(Index);</code></pre>
 						<p>After adding the endpoint can be called when a client request matches it's route attribute values.</p>
+
+						<h5>Importing Endpoint Collections:</h5>
+						<p>In the following example we will import a collection (class) of endpoints.</p>
+						<pre><code class="language-cs">router.Import&#60;EndpointCollectionClass&#62;();</code></pre>
+						<p>This will import all static methods in the class as endpoints</p>
 					</section><!--//section-->
 			    </article><!--//docs-article-->
 			    
