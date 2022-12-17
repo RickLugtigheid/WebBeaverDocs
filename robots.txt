@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /assets/
+Sitemap: https://webbeaver.github.io/WebBeaverDocs/sitemap.xml
